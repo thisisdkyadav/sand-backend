@@ -17,5 +17,9 @@ const messageSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Chat",
   },
+  localId: {
+    type: String,
+    required: false,
+  },
 })
 export const Message = mongoose.model("Message", messageSchema)

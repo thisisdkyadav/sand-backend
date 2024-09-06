@@ -1,15 +1,15 @@
 // Description: Global utility functions.
 import jwt from "jsonwebtoken"
+import dotenv from "dotenv"
 
-const ACCESS_TOKEN_SECRET =
-  "b218e3f22615945db84564fd9054ce094b42f6ee801c63d025ddbcb95b98c142d976210fd3b60f7e70de091081efc3f4b9cc7c41d079639af2d0c3a9421e9bba"
+dotenv.config()
 
-const accessTokenSecret = ACCESS_TOKEN_SECRET
+const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET
 
-export function generateAccessToken(phone) {
-  return jwt.sign(phone, accessTokenSecret)
+export function generateAccessToken(payload) {
+  return jwt.sign(payload, accessTokenSecret)
 }
 
-export function generateTempToken(item) {
-  return jwt.sign(item, accessTokenSecret, { expiresIn: "10m" })
+export function generateTempToken(payload) {
+  return jwt.sign(payload, accessTokenSecret, { expiresIn: "10m" })
 }

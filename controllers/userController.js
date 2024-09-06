@@ -1,11 +1,9 @@
 // Description: This file contains the logic for user related operations.
 import { User } from "../models/user.model.js"
-import { getAccount, sendOtp, verify } from "../utils/appwrite.js"
+import { sendOtp, verify } from "../utils/appwrite.js"
 import { generateAccessToken } from "../utils/global.js"
 
 export const register = async (req, res) => {
-  console.log("sdsdsd")
-
   try {
     const { phone } = req.body
 
@@ -19,9 +17,8 @@ export const register = async (req, res) => {
     if (!user) {
       await User.create({ phone })
     }
-    await sendOtp(phone)
 
-    // const tempToken = generateTempToken(phone)
+    await sendOtp(phone)
 
     return res.status(200).json({
       message: "OTP sent",
@@ -43,10 +40,17 @@ export const login = async (req, res) => {
   if (!otpCorrect) {
     return res.status(400).json({
       message: "Invalid OTP",
+      otp,
+      phone,
     })
   }
 
-  const accessToken = generateAccessToken(phone)
+  const user = await User.findOne({ phone })
+  if (!user) {
+    await User.create({ phone })
+  }
+
+  const accessToken = generateAccessToken({ phone })
 
   return res.status(200).json({
     message: "User login - POST req",
@@ -66,13 +70,13 @@ export const getProfile = async (req, res) => {
   try {
     const phone = req.phone
     // query user without messages and chats
-    const user = User.findOne({ phone }).select("-messages -chats")
+    const user = await User.findOne({ phone }).select("-messages -chats").lean()
 
     return res.status(200).json({
       message: "User profile - GET req",
       user,
     })
-  } catch {
+  } catch (error) {
     return res.status(500).json({
       message: "Error in getProfile",
       error: error.message,
@@ -105,5 +109,31 @@ export const getRegisteredContacts = async (req, res) => {
       message: "Error in getRegisteredContacts",
       error: error.message,
     })
+  }
+}
+
+export const othersProfile = async (res, req) => {
+  try {
+    const { phone } = req.params
+
+    const user = await User.findOne({ phone }).select("-messages -chats").lean()
+
+    return res.status(200).json({
+      message: "Others profile - GET req",
+      user,
+    })
+  } catch (error) {
+    return res.status(500).json({
+      message: "Error in othersProfile",
+      error: error,
+    })
+  }
+}
+
+export const editProfile = async (res, req) => {
+  try {
+    const profileImage = req.file
+  } catch (error) {
+    console.log(error)
   }
 }

@@ -1,0 +1,5 @@
+{
+  "appService.zipIgnorePattern": ["node_modules{,/**}", ".vscode{,/**}"],
+  "appService.defaultWebAppToDeploy": "/subscriptions/92075a41-7432-4e33-a4d5-8189359c2449/resourceGroups/sand-app/providers/Microsoft.Web/sites/sand-backend",
+  "appService.deploySubpath": "."
+}

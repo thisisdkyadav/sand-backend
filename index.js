@@ -1,7 +1,9 @@
 import express from "express"
+import http from "http"
 import userRoute from "./routes/userRoute.js"
+import messageRoute from "./routes/messageRoute.js"
+import chatRoute from "./routes/chatRoute.js"
 import appWrite from "node-appwrite"
-import { app, server } from "./socket/socket.js"
 import connectDB from "./utils/db.js"
 import dotenv from "dotenv"
 
@@ -9,9 +11,15 @@ const port = process.env.PORT || 3000
 
 dotenv.config()
 
+const app = express()
+
+const server = http.createServer(app)
+
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use("/api/user", userRoute)
+app.use("/api/message", messageRoute)
+app.use("/api/chat", chatRoute)
 
 const client = new appWrite.Client()
 
