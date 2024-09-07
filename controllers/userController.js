@@ -1,7 +1,8 @@
 // Description: This file contains the logic for user related operations.
 import { User } from "../models/user.model.js"
 import { sendOtp, verify } from "../utils/appwrite.js"
-import { generateAccessToken } from "../utils/global.js"
+import { uploadImageStreamed } from "../utils/azureStorage.js"
+import { extractMetadata, generateAccessToken } from "../utils/global.js"
 
 export const register = async (req, res) => {
   try {
@@ -50,7 +51,7 @@ export const login = async (req, res) => {
     await User.create({ phone })
   }
 
-  const accessToken = generateAccessToken({ phone })
+  const accessToken = await generateAccessToken({ phone })
 
   return res.status(200).json({
     message: "User login - POST req",
@@ -130,10 +131,16 @@ export const othersProfile = async (res, req) => {
   }
 }
 
-export const editProfile = async (res, req) => {
+export const editProfileImage = async (req, res) => {
   try {
-    const profileImage = req.file
+    const fileName = await extractMetadata(req.headers)
+    const imageUrl = await uploadImageStreamed(fileName, req)
+
+    res.writeHead(201, { "Content-Type": "application/json" })
+    res.end(JSON.stringify({ message: "Image uploaded successfully", imageUrl }))
   } catch (error) {
-    console.log(error)
+    console.error("Error uploading image:", error)
+    res.writeHead(500, { "Content-Type": "application/json" })
+    res.end(JSON.stringify({ message: "Error uploading image", error: error.message }))
   }
 }

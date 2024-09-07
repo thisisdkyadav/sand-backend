@@ -1,5 +1,6 @@
 import express from "express"
 import {
+  editProfileImage,
   getProfile,
   getRegisteredContacts,
   login,
@@ -13,5 +14,6 @@ router.route("/send-otp").post(register)
 router.route("/verify").post(login)
 router.route("/profile").get(isAuthenticated, getProfile)
 router.route("/check-contacts").post(isAuthenticated, getRegisteredContacts)
+router.route("/edit-profile-image").post(isAuthenticated, editProfileImage)
 
 export default router
