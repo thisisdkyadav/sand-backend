@@ -115,13 +115,16 @@ export const getRegisteredContacts = async (req, res) => {
 
 export const othersProfile = async (res, req) => {
   try {
-    const { phone } = req.params
+    const { othersPhone } = req.params
 
-    const user = await User.findOne({ phone }).select("-messages -chats").lean()
+    // const user = await User.findOne({ phone }).select("-messages -chats").lean()
+    const users = await User.find({ phone: { $in: othersPhone } })
+      .select("-messages -chats")
+      .lean()
 
     return res.status(200).json({
       message: "Others profile - GET req",
-      user,
+      users,
     })
   } catch (error) {
     return res.status(500).json({
